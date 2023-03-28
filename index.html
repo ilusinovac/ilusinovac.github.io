@@ -1,0 +1,247 @@
+<html><head> <meta name="viewport" content="width=device-width, initial-scale=1.0"> </head>
+<title>ILUOS</title>
+<link rel="icon" href="favicon.ico" type="image/ico">
+<body>
+  <video autoplay muted loop id="myVideo">
+    <source src="nisan.mp4" type="video/mp4">
+  </video>
+<style>
+body {
+   background-color: #cccccc;
+   background-repeat: no-repeat;
+   background-size: cover; 
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%; 
+    min-height: 100%;
+}
+
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+
+.terminal-window {
+  margin: auto;
+  width: 600px;
+  height: 360px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.terminal-window header {
+  background: #E0E8F0;
+  height: 30px;
+  border-radius: 8px 8px 0 0;
+  padding-left: 10px;
+}
+
+.terminal-window header .button {
+  width: 12px;
+  height: 12px;
+  margin: 10px 4px 0 0;
+  display: inline-block;
+  float: right;
+  border-radius: 8px;
+}
+
+.terminal-window header .button.green {
+  background: #3BB662;
+}
+
+.terminal-window header .button.yellow {
+  background: #E5C30F;
+}
+
+.terminal-window header .button.red {
+  background: #E75448;
+}
+
+.terminal-window header .text {
+  display: inline-block;
+  font-family: letter-gothic-std, monospace;
+  color: #60646b;
+  margin: 4px 0 0 159px;
+
+  text-align: center;
+}  
+
+.terminal-window section.terminal {
+  color: white;
+  font-family: Menlo, Monaco, "Consolas", "Courier New", "Courier";
+  font-size: 11pt;
+  background: rgba(18, 20, 22, 0.8);
+  padding: 10px;
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  top: 30px;
+  bottom: 0;
+  overflow: auto;
+}
+
+.terminal-window section.terminal .typed-cursor {
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+
+.terminal-data { display: none; }
+.terminal-window .gray { color: gray; }
+.terminal-window .green { color: green;}
+</style>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<div class="terminal-window">
+  <header>
+    <div class="text"><font color="green">|<span id="doc_time">date_data</span>|  </font>root@kali: ILU</div> 
+    <div class="button red"></div>
+    <div class="button yellow"></div>
+    <div class="button green"></div>
+  </header>
+  <section class="terminal">
+    <div class="history"></div>
+    $&nbsp;<span class="prompt"></span>
+    <span class="typed-cursor"></span>
+    
+  </section>
+</div>
+<!-- data -->
+  <div class="terminal-data mimik-run-output">
+ <br>ILU<br>
+ ----------------------------------------------<br>
+ GLAD THAT YOU ENTERED THE WORLD OF MR.SUSHIN<br><br> 
+
+ &nbsp;&nbsp;Some stuff:<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="https://discord.gg/dhtnWphPmK" style="text-decoration:none" target="_blank">discord</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="https://steamcommunity.com/id/ouGilu" style="text-decoration:none" target="_blank">steam</a><br>
+ &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="./old/old.html" style="text-decoration:none" target="_blank">old site</a><br>
+ <br>
+    <span class="gray">&nbsp;---------- ------- ------- -------- --------</span><br>
+&nbsp;&nbsp;appname&nbsp;&nbsp;&nbsp;&nbsp;acces&nbsp;&nbsp;&nbsp;&nbsp;pid&nbsp;&nbsp;&nbsp;&nbsp;Status&nbsp;&nbsp;&nbsp;Memory<br>
+    <span class="gray">&nbsp;---------- ------- ------- -------- --------</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;ILU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;full&nbsp;&nbsp;&nbsp;&nbsp;2002&nbsp;&nbsp;&nbsp;<span class="green">online</span>&nbsp;&nbsp;&nbsp;&nbsp;19 MB      <br>
+  <br>
+&nbsp;&nbsp;<span class="green">ILU has successfully launched!</span><br>
+  <br>
+  </div>
+  <script type="text/javascript">
+    function clock() {
+        var d = new Date();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var seconds = d.getSeconds();
+
+
+        if (hours <= 9) hours = "0" + hours;
+        if (minutes <= 9) minutes = "0" + minutes;
+        if (seconds <= 9) seconds = "0" + seconds;
+
+        date_time = hours + ":" + minutes + ":" + seconds;
+        if (document.layers) {
+            document.layers.doc_time.document.write(date_time);
+            document.layers.doc_time.document.close();
+        }
+        else document.getElementById("doc_time").innerHTML = date_time;
+        setTimeout("clock()", 10);
+    }
+</script>
+<script type="text/javascript">
+    clock();
+</script>
+<script src="jquery.min.js"></script><script src="typed.custom.js"></script>
+<script>$(function() {
+  var data = [
+  { 
+    action: 'type',
+    strings: ["npm install -g ILU^400"],
+    output: '<span class="gray">+ILU@1.0 installed</span><br>&nbsp;',
+    postDelay: 1000
+  },
+  { 
+    action: 'type',
+    strings: ["cd ILU^400"],
+    output: ' ',
+    postDelay: 1000
+  },
+  { 
+    action: 'type',
+    strings: ['ILU start^400'],
+    output: $('.mimik-run-output').html()
+  },
+  { 
+    action: 'type',
+    strings: ["Man cannot change himself withouth suffering,for he is both the marble and the sculptor^1200","Sorry no feelings have been found !!",],
+    output: '',
+    postDelay: 2000
+  }
+];
+  runScripts(data, 0);
+});
+
+function runScripts(data, pos) {
+    var prompt = $('.prompt'),
+        script = data[pos];
+    if(script.clear === true) {
+      $('.history').html(''); 
+    }
+    switch(script.action) {
+        case 'type':
+          // cleanup for next execution
+          prompt.removeData();
+          $('.typed-cursor').text('');
+          prompt.typed({
+            strings: script.strings,
+            typeSpeed: 30,
+            callback: function() {
+              var history = $('.history').html();
+              history = history ? [history] : [];
+              history.push('$ ' + prompt.text());
+              if(script.output) {
+                history.push(script.output);
+                prompt.html('');
+                $('.history').html(history.join('<br>'));
+              }
+              // scroll to bottom of screen
+              $('section.terminal').scrollTop($('section.terminal').height());
+              // Run next script
+              pos++;
+              if(pos < data.length) {
+                setTimeout(function() {
+                  runScripts(data, pos);
+                }, script.postDelay || 1000);
+              }
+            }
+          });
+          break;
+        case 'view':
+
+          break;
+    }
+}
+</script>
+
+<audio autoplay loop>
+  <source src="trap.mp3" type="audio/mpeg">
+</audio>
+</html>
