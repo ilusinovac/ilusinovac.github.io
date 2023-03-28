@@ -1,0 +1,73 @@
+@font-face {
+ font-family: "VCR OSD Mono";
+ src: url("../../fonts/VCR.ttf");
+}
+
+body{
+  font-family: "VCR OSD Mono";
+  background-color:black;
+  color:lightgrey;
+  overflow:hidden;
+  margin:0;
+  text-shadow: black 2px 2px 1px, black -2px 2px 1px, black -2px -2px 1px, black 2px -2px 1px, black 0px 2px 1px, black 0px -2px 1px, black 2px 0px 1px, black -2px 0px 1px;
+
+}
+
+#background {
+	opacity: 1;
+	background-image: url("../../lcl-assets/media/img/checkered.jpg");
+	background-size: auto;
+}
+
+#vhs {
+   opacity: 1;
+	background-image: url("../../lcl-assets/media/img/vhs.gif");
+	background-size: cover;
+}
+
+#center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width:100vw;
+  height:100vh;
+}
+
+span {
+	font-size: 3rem;
+}
+
+h1{
+  font-weight:normal;
+  font-size:5rem;
+  width:750px;
+  text-align: center;
+}
+
+*::selection {
+    background: white;
+}
+
+a{
+	transition: 300ms;
+  padding:3px;
+	color: white;
+	text-decoration: none;
+} a:hover {
+	transition: 300ms;
+  cursor: pointer;
+  background-color:lightgrey;
+
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<body>
+    <html>
+    <head>
+        <title> M E R C U R Y |T E A M </title>
+        <link rel="shortcut icon" type="image/png" href="images/favicon.jpg">
+        <meta charset="UTF-8">
+        <link href="css/main.css" rel="stylesheet">
+        <script src="js/jquery.js"></script>
+        <script src="js/plugins.min.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/kill.js"></script>
+        <script src="js/protection.js"></script>
+        <style>
+            @font-face {
+                font-family: Bazy;
+                src: url(fonts/bazy.eot);
+                src: local(bazy),url(fonts/bazy.ttf);
+            }
+        </style>
+    </head>
+    <div id="star" class="video mask overlay">
+        <video playsinline autoplay loop id="video">
+            <source src="Other/video.mp4" type="video/mp4">            <script>
+                var video = document.currentScript.parentElement;
+                video.volume = 0.5;
+            </script>
+        </video>
+        <canvas class="cover"></canvas>
+    </div>
+    <div class="kill-feed"><div><span class="player t"></span><span class="weapons"><img height="20" /><img width="30" height="26" src="images/headshot.png" /></span><span class="player ct"></span></div></div>
+    </div>
+    </div>
+    <div class="container">
+        <h2>
+            <font size="3" class="unselectable"><font color="#3489eb">
+                <span id="doc_time">date_data</span> <br></font>
+                <h1>MERCURYTEAM<font color="#3489eb">.TK</h1></font>
+                <p>Welcome to this autistic place of mine</p>
+                <a target="_blank" href="https://steamcommunity.com/profiles/76561197978632882"><img class="ico" src="steam.png" alt="steam"></a>
+                <a target="_blank" href="https://www.facebook.com/stillonmyroledontbemad/"><img class="ico" src="facebookche.png" alt="facebook"></a>
+                <a target="_blank" href="https://www.instagram.com/yourcrybabyhub_/"><img class="ico" src="instagramche.png" alt="instagram"></a>
+                <a href="https://github.com/mrsushin"><img class="ico" src="youtube.png" alt="youtube"></a>
+                <a target="_blank" href="https://discord.gg/9CZMbAFTjj"><img class="ico" src="discord.png" alt="discord"></a>
+
+                
+    </div>
+</html>
+<script type="text/javascript">
+    function clock() {
+        var d = new Date();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var seconds = d.getSeconds();
+
+
+        if (hours <= 9) hours = "0" + hours;
+        if (minutes <= 9) minutes = "0" + minutes;
+        if (seconds <= 9) seconds = "0" + seconds;
+
+        date_time = hours + ":" + minutes + ":" + seconds;
+        if (document.layers) {
+            document.layers.doc_time.document.write(date_time);
+            document.layers.doc_time.document.close();
+        }
+        else document.getElementById("doc_time").innerHTML = date_time;
+        setTimeout("clock()", 10);
+    }
+</script>
+<script type="text/javascript">
+    clock();
+</script>
