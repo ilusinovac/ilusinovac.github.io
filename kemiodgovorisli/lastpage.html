@@ -54,32 +54,62 @@
         <div class="flower__glass"></div>
     </div>
 
-    <!-- Audio element with fallback for mobile browsers -->
+    <!-- Simple visible music button for mobile -->
+    <button id="musicButton" style="position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background:white; border:2px solid #ff6b6b; font-size:30px; cursor:pointer; z-index:1000; box-shadow:0 2px 10px rgba(0,0,0,0.2);">🔇</button>
+
+    <!-- Audio element -->
     <audio id="bgMusic" loop preload="auto">
         <source src="dobroutro.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
     <script>
-        // Wait for the page to load
-        document.addEventListener('DOMContentLoaded', function() {
+        (function() {
             const audio = document.getElementById('bgMusic');
-            
-            // Try to play automatically (may be blocked by browsers)
-            audio.play().catch(function(error) {
-                console.log('Auto-play was prevented. Click anywhere to play music.');
-            });
-            
-            // Add click handler for mobile devices that block autoplay
-            document.addEventListener('click', function initAudio() {
-                const audio = document.getElementById('bgMusic');
-                if (audio && audio.paused) {
-                    audio.play().catch(e => {
-                        console.log('Still unable to play audio:', e);
-                    });
+            const musicBtn = document.getElementById('musicButton');
+            let isPlaying = false;
+
+            // Try to load audio
+            audio.load();
+
+            // Music button click handler
+            musicBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                if (isPlaying) {
+                    audio.pause();
+                    musicBtn.innerHTML = '🔇';
+                    isPlaying = false;
+                } else {
+                    audio.play()
+                        .then(() => {
+                            musicBtn.innerHTML = '🔊';
+                            isPlaying = true;
+                        })
+                        .catch(err => {
+                            console.log('Play failed:', err);
+                            alert('Tap the screen first, then try the music button');
+                        });
                 }
+            });
+
+            // First touch anywhere enables audio on mobile
+            document.body.addEventListener('touchstart', function enableAudio() {
+                // Create and play a silent sound to unlock audio on iOS
+                const silent = new Audio();
+                silent.play().catch(() => {});
+                
+                // Remove after first touch
+                document.body.removeEventListener('touchstart', enableAudio);
             }, { once: true });
-        });
+
+            // Handle page visibility
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && isPlaying) {
+                    audio.pause();
+                }
+            });
+
+        })();
     </script>
 </body>
 </html>
