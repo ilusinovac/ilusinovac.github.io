@@ -1,492 +1,366 @@
-<html>
-<head> <meta name="viewport" content="width=device-width, initial-scale=1.0"> </head>
-<title>ILUOS</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ILUOS · responsive terminal</title>
+  <link rel="icon" href="favicon.ico" type="image/ico">
+  <style>
+    /* RESET & BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<link rel="icon" href="favicon.ico" type="image/ico">
+    body {
+      background-color: #0a0c0e;          /* fallback */
+      font-family: sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
+    /* VIDEO BACKGROUND — covers full viewport, fixed */
+    #myVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;                   /* modern cover, no min-width tricks needed */
+      z-index: -1;
+    }
+
+    /* TERMINAL WINDOW — fully responsive, flex-based */
+    .terminal-window {
+      width: 100%;
+      max-width: 720px;                    /* slightly larger for desktop readability */
+      margin: 0 auto;
+      border-radius: 16px;                 /* softer corners */
+      overflow: hidden;                    /* keeps border radius consistent */
+      background: transparent;              /* let the terminal section handle background */
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.269);
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(2px);           /* subtle glass effect, optional */
+      -webkit-backdrop-filter: blur(2px);
+      transition: all 0.2s ease;
+    }
+
+    /* HEADER — draggable look, now flex */
+    .terminal-window header {
+      background: rgba(17, 119, 221, 0.75); /* semi-transparent to match video */
+      height: 38px;                         /* slightly taller for fat fingers */
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* window buttons (left side on macOS, but we keep right as original) */
+    .window-buttons {
+      display: flex;
+      gap: 8px;
+      order: 3; /* push to the right */
+    }
+
+    .window-buttons .button {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      transition: filter 0.2s;
+    }
+
+    .window-buttons .button.red {
+      background: #ff5f5a;
+    }
+    .window-buttons .button.yellow {
+      background: #ffbe2e;
+    }
+    .window-buttons .button.green {
+      background: #2aca44;
+    }
+
+    /* optional hover effect */
+    .window-buttons .button:hover {
+      filter: brightness(1.2);
+    }
+
+    /* header text (date + user) */
+    .terminal-window header .text {
+      font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+      font-size: clamp(0.75rem, 3vw, 0.9rem);
+      color: white;
+      text-shadow: 0 1px 2px black;
+      letter-spacing: 0.3px;
+      order: 2;
+      text-align: center;
+      flex: 1 1 auto;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 0 6px;
+    }
+
+    /* terminal content area */
+    .terminal-window section.terminal {
+      background: rgba(10, 12, 16, 0.85);   /* deeper black with transparency */
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      color: #e5e5e5;
+      font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace;
+      font-size: clamp(13px, 4vw, 15px);    /* responsive font */
+      line-height: 1.5;
+      padding: 16px 14px;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      max-height: 70vh;                     /* limit on very tall screens, but auto on mobile */
+      min-height: 260px;                     /* ensure some space */
+      word-break: break-word;
+      scroll-behavior: smooth;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* prompt & history styling */
+    .terminal .history {
+      margin-bottom: 6px;
+      white-space: pre-wrap;
+    }
+
+    .terminal .prompt {
+      display: inline;
+    }
+
+    .typed-cursor {
+      opacity: 1;
+      font-weight: 300;
+      margin-left: 2px;
+      animation: blink 0.9s infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    /* colors inside terminal */
+    .terminal .gray {
+      color: #9e9e9e;
+    }
+    .terminal .green {
+      color: #8bc34a;
+    }
+
+    /* inline links */
+    .terminal a {
+      color: #80cbc4;
+      text-decoration: none;
+      border-bottom: 1px dotted #4f9e9e;
+    }
+    .terminal a:hover {
+      border-bottom: 1px solid #ffffff;
+      color: white;
+    }
+
+    /* small screens adjustments */
+    @media (max-width: 480px) {
+      body {
+        padding: 8px;
+      }
+      .terminal-window header {
+        height: 44px;                    /* more tap space */
+      }
+      .window-buttons .button {
+        width: 16px;
+        height: 16px;
+      }
+      .terminal-window section.terminal {
+        padding: 12px;
+        max-height: 70vh;
+        font-size: 14px;
+      }
+    }
+
+    /* for very short screens, allow terminal to shrink */
+    @media (max-height: 500px) {
+      .terminal-window section.terminal {
+        max-height: 65vh;
+      }
+    }
+
+    /* optional audio element hidden */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
 <body>
 
-  <video autoplay muted loop id="myVideo">
-
+  <!-- VIDEO BACKGROUND -->
+  <video autoplay muted loop playsinline id="myVideo">
     <source src="nisan.mp4" type="video/mp4">
-
+    <!-- fallback text if video fails -->
+    Your browser does not support HTML5 video.
   </video>
 
-<style>
-
-body {
-
-   background-color: #cccccc;
-
-   background-repeat: no-repeat;
-
-   background-size: cover; 
-
-    position: fixed;
-
-    right: 0;
-
-    bottom: 0;
-
-    min-width: 100%; 
-
-    min-height: 100%;
-
-}
-
-
-
-#myVideo {
-
-  position: fixed;
-
-  right: 0;
-
-  bottom: 0;
-
-  min-width: 100%;
-
-  min-height: 100%;
-
-}
-
-
-
-
-
-.terminal-window {
-
-  margin: auto;
-
-  width: 600px;
-
-  height: 360px;
-
-  border-radius: 10px;
-
-  position: relative;
-
-}
-
-
-
-.terminal-window header {
-
-  background: #E0E8F0;
-
-  height: 30px;
-
-  border-radius: 8px 8px 0 0;
-
-  padding-left: 10px;
-
-}
-
-
-
-.terminal-window header .button {
-
-  width: 12px;
-
-  height: 12px;
-
-  margin: 10px 4px 0 0;
-
-  display: inline-block;
-
-  float: right;
-
-  border-radius: 8px;
-
-}
-
-
-
-.terminal-window header .button.green {
-
-  background: #3BB662;
-
-}
-
-
-
-.terminal-window header .button.yellow {
-
-  background: #E5C30F;
-
-}
-
-
-
-.terminal-window header .button.red {
-
-  background: #E75448;
-
-}
-
-
-
-.terminal-window header .text {
-
-  display: inline-block;
-
-  font-family: letter-gothic-std, monospace;
-
-  color: #60646b;
-
-  margin: 4px 0 0 159px;
-
-
-
-  text-align: center;
-
-}  
-
-
-
-.terminal-window section.terminal {
-
-  color: white;
-
-  font-family: Menlo, Monaco, "Consolas", "Courier New", "Courier";
-
-  font-size: 11pt;
-
-  background: rgba(18, 20, 22, 0.8);
-
-  padding: 10px;
-
-  box-sizing: border-box;
-
-  position: absolute;
-
-  width: 100%;
-
-  top: 30px;
-
-  bottom: 0;
-
-  overflow: auto;
-
-}
-
-
-
-.terminal-window section.terminal .typed-cursor {
-
-    opacity: 1;
-
-    -webkit-animation: blink 0.7s infinite;
-
-    -moz-animation: blink 0.7s infinite;
-
-    animation: blink 0.7s infinite;
-
-}
-
-@keyframes blink{
-
-    0% { opacity:1; }
-
-    50% { opacity:0; }
-
-    100% { opacity:1; }
-
-}
-
-@-webkit-keyframes blink{
-
-    0% { opacity:1; }
-
-    50% { opacity:0; }
-
-    100% { opacity:1; }
-
-}
-
-@-moz-keyframes blink{
-
-    0% { opacity:1; }
-
-    50% { opacity:0; }
-
-    100% { opacity:1; }
-
-}
-
-
-
-.terminal-data { display: none; }
-
-.terminal-window .gray { color: gray; }
-
-.terminal-window .green { color: green;}
-
-</style>
-
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-<div class="terminal-window">
-
-  <header>
-
-    <div class="text"><font color="green">|<span id="doc_time">date_data</span>|  </font>root@kali: ILU</div> 
-
-    <div class="button red"></div>
-
-    <div class="button yellow"></div>
-
-    <div class="button green"></div>
-
-  </header>
-
-  <section class="terminal">
-
-    <div class="history"></div>
-
-    $&nbsp;<span class="prompt"></span>
-
-    <span class="typed-cursor"></span>
-
-    
-
-  </section>
-
-</div>
-
-<!-- data -->
-
-  <div class="terminal-data mimik-run-output">
-
- <br>ILU<br>
-
- ----------------------------------------------<br>
-
- WELCOME<br><br> 
-
-
-
- &nbsp;&nbsp;Some stuff:<br>
- &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="https://www.instagram.com/ilusinovac/" style="text-decoration:none" target="_blank">instagram</a><br>
- &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="https://discord.gg/dhtnWphPmK" style="text-decoration:none" target="_blank">discord</a><br>
- &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="https://steamcommunity.com/id/ouGilu" style="text-decoration:none" target="_blank">steam</a><br>
- &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="./old/old.html" style="text-decoration:none" target="_blank">old site</a><br>
-
- <br>
-
-    <span class="gray">&nbsp;---------- ------- ------- -------- --------</span><br>
-
-&nbsp;&nbsp;appname&nbsp;&nbsp;&nbsp;&nbsp;acces&nbsp;&nbsp;&nbsp;&nbsp;pid&nbsp;&nbsp;&nbsp;&nbsp;Status&nbsp;&nbsp;&nbsp;Memory<br>
-
-    <span class="gray">&nbsp;---------- ------- ------- -------- --------</span><br>
-
-&nbsp;&nbsp;&nbsp;&nbsp;ILU&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;full&nbsp;&nbsp;&nbsp;&nbsp;2002&nbsp;&nbsp;&nbsp;<span class="green">online</span>&nbsp;&nbsp;&nbsp;&nbsp;256 MB      <br>
-
-  <br>
-
-&nbsp;&nbsp;<span class="green">ILU has successfully launched!</span><br>
-
-  <br>
-
+  <!-- TERMINAL WINDOW (centered via flex) -->
+  <div class="terminal-window">
+    <header>
+      <div class="window-buttons">
+        <div class="button red"></div>
+        <div class="button yellow"></div>
+        <div class="button green"></div>
+      </div>
+      <div class="text">
+        <span style="color:#ffffff;">|<span id="doc_time">loading...</span>|</span> root@ilusinovac: ILU
+      </div>
+    </header>
+
+    <section class="terminal">
+      <div class="history"></div>
+      $&nbsp;<span class="prompt"></span>
+      <span class="typed-cursor"></span>
+    </section>
   </div>
 
-  <script type="text/javascript">
+  <!-- hidden data block (used for output after commands) -->
+  <div class="terminal-data mimik-run-output" style="display: none;">
+    <br>
+    ILU<br>
+    ----------------------------------------------<br>
+    WELCOME<br><br>
+    &nbsp;&nbsp;Some socials:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="green"><img src=./social.png width= "15px" heigh="15px" style="vertical-align: middle; margin-right: 4px;"alt="icon"></span> <a class="gray" href="https://www.instagram.com/ilusinovac/" target="_blank">Instagram</a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="green"><img src=./github.png width= "15px" heigh="15px" style="vertical-align: middle; margin-right: 4px;"alt="icon"></span> <a class="gray" href="https://github.com/ilusinovac" target="_blank">GitHub</a><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="green"></span><img src=./steam.png width= "15px" heigh="15px" style="vertical-align: middle; margin-right: 4px;"alt="icon"><a class="gray" href="https://steamcommunity.com/id/ouGilu" target="_blank">Steam</a><br>
+   <!-- &nbsp;&nbsp;&nbsp;&nbsp;<span class="green">-</span> <a class="gray" href="./old/old.html" target="_blank">old site</a><br>
+    <br> -->
+    <span class="gray">&nbsp;------------------------------------------------</span>
+    &nbsp;&nbsp;&nbsp;Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faculty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Age&nbsp;&nbsp;&nbsp;&nbsp;Status&nbsp;&nbsp;&nbsp;Memory
+    <span class="gray">&nbsp;------------------------------------------------</span>
+    &nbsp;&nbsp;&nbsp;Antonio&nbsp;&nbsp;&nbsp;&nbsp;FINKI&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2004&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">online</span>&nbsp;&nbsp;&nbsp;&nbsp;512 KB
+    <br>
+    &nbsp;&nbsp;<span class="green">ILU has successfully launched!</span><br>
+  </div>
 
-    function clock() {
+  <!-- scripts -->
+  <script src="jquery.min.js"></script>
+  <script src="typed.custom.js"></script>
 
-        var d = new Date();
+  <script>
+    // modern clock update (every second, not 10ms)
+    function updateClock() {
+      var d = new Date();
+      var hours = d.getHours().toString().padStart(2, '0');
+      var minutes = d.getMinutes().toString().padStart(2, '0');
+      var seconds = d.getSeconds().toString().padStart(2, '0');
+      var timeString = hours + ':' + minutes + ':' + seconds;
+      var el = document.getElementById('doc_time');
+      if (el) el.textContent = timeString;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
 
-        var hours = d.getHours();
+    // main terminal typing sequence (preserved from original)
+    $(function() {
+      var data = [
+        { 
+          action: 'type',
+          strings: ["npm install -g ILU^400"],
+          output: '<span class="gray">+ILU@2.0 installed</span><br>&nbsp;',
+          postDelay: 1000
+        },
+        { 
+          action: 'type',
+          strings: ["cd ILU^400"],
+          output: ' ',
+          postDelay: 1000
+        },
+        { 
+          action: 'type',
+          strings: ['ILU start^400'],
+          output: $('.mimik-run-output').html()   // inject the hidden data
+        },
+        { 
+          action: 'type',
+          strings: [
+            "My g, don't risk your lifе for a thong^1200",
+            "If we aren't drinking pepsi we drinking sparkling water."
+          ],
+          output: '',
+          postDelay: 2000
+        }
+      ];
 
-        var minutes = d.getMinutes();
+      function runScripts(data, pos) {
+        var prompt = $('.prompt'),
+            script = data[pos];
 
-        var seconds = d.getSeconds();
-
-
-
-
-
-        if (hours <= 9) hours = "0" + hours;
-
-        if (minutes <= 9) minutes = "0" + minutes;
-
-        if (seconds <= 9) seconds = "0" + seconds;
-
-
-
-        date_time = hours + ":" + minutes + ":" + seconds;
-
-        if (document.layers) {
-
-            document.layers.doc_time.document.write(date_time);
-
-            document.layers.doc_time.document.close();
-
+        if (script.clear === true) {
+          $('.history').html('');
         }
 
-        else document.getElementById("doc_time").innerHTML = date_time;
+        switch (script.action) {
+          case 'type':
+            prompt.removeData(); // clear any previous typed instance
+            $('.typed-cursor').text(''); // reset cursor
+            prompt.typed({
+              strings: script.strings,
+              typeSpeed: 30,
+              callback: function() {
+                var history = $('.history').html();
+                history = history ? [history] : [];
+                history.push('$ ' + prompt.text());
+                if (script.output) {
+                  history.push(script.output);
+                  prompt.html('');
+                  $('.history').html(history.join('<br>'));
+                }
+                // scroll terminal to bottom
+                $('section.terminal').scrollTop($('section.terminal')[0].scrollHeight);
 
-        setTimeout("clock()", 10);
-
-    }
-
-</script>
-
-<script type="text/javascript">
-
-    clock();
-
-</script>
-
-<script src="jquery.min.js"></script><script src="typed.custom.js"></script>
-
-<script>$(function() {
-
-  var data = [
-
-  { 
-
-    action: 'type',
-
-    strings: ["npm install -g ILU^400"],
-
-    output: '<span class="gray">+ILU@1.0 installed</span><br>&nbsp;',
-
-    postDelay: 1000
-
-  },
-
-  { 
-
-    action: 'type',
-
-    strings: ["cd ILU^400"],
-
-    output: ' ',
-
-    postDelay: 1000
-
-  },
-
-  { 
-
-    action: 'type',
-
-    strings: ['ILU start^400'],
-
-    output: $('.mimik-run-output').html()
-
-  },
-
-  { 
-
-    action: 'type',
-
-    strings: ["My g, don't risk your lifе for a thong^1200","If it ain't money I'm not in the mood",],
-
-    output: '',
-
-    postDelay: 2000
-
-  }
-
-];
-
-  runScripts(data, 0);
-
-});
-
-
-
-function runScripts(data, pos) {
-
-    var prompt = $('.prompt'),
-
-        script = data[pos];
-
-    if(script.clear === true) {
-
-      $('.history').html(''); 
-
-    }
-
-    switch(script.action) {
-
-        case 'type':
-
-          // cleanup for next execution
-
-          prompt.removeData();
-
-          $('.typed-cursor').text('');
-
-          prompt.typed({
-
-            strings: script.strings,
-
-            typeSpeed: 30,
-
-            callback: function() {
-
-              var history = $('.history').html();
-
-              history = history ? [history] : [];
-
-              history.push('$ ' + prompt.text());
-
-              if(script.output) {
-
-                history.push(script.output);
-
-                prompt.html('');
-
-                $('.history').html(history.join('<br>'));
-
+                // next script
+                pos++;
+                if (pos < data.length) {
+                  setTimeout(function() {
+                    runScripts(data, pos);
+                  }, script.postDelay || 1000);
+                }
               }
+            });
+            break;
+        }
+      }
 
-              // scroll to bottom of screen
+      // start the sequence
+      runScripts(data, 0);
+    });
 
-              $('section.terminal').scrollTop($('section.terminal').height());
+    // optional: audio autoplay (may be blocked on mobile, but kept)
+    // we add a small workaround: try to play after any user interaction
+    document.addEventListener('click', function initAudio() {
+      var audio = document.querySelector('audio');
+      if (audio && audio.paused) {
+        audio.play().catch(e => {}); // ignore errors
+      }
+      document.removeEventListener('click', initAudio);
+    }, { once: true });
+  </script>
 
-              // Run next script
+  <!-- audio with preload (autoplay attribute may not work on mobile, we have click fallback) -->
+  <audio loop preload="auto">
+    <source src="trap.mp3" type="audio/mpeg">
+  </audio>
 
-              pos++;
-
-              if(pos < data.length) {
-
-                setTimeout(function() {
-
-                  runScripts(data, pos);
-
-                }, script.postDelay || 1000);
-
-              }
-
-            }
-
-          });
-
-          break;
-
-        case 'view':
-
-
-
-          break;
-
-    }
-
-}
-
-</script>
-
-
-
-<audio autoplay loop>
-
-  <source src="trap.mp3" type="audio/mpeg">
-
-</audio>
-
+  <!-- ensure that typed cursor is visible even if font is large -->
+</body>
 </html>
-
