@@ -1,8 +1,8 @@
 {
-  "name": "BusTracker",
-  "short_name": "BusTracker",
-  "description": "Real-time bus tracking",
-  "start_url": "/MacedonianBusTracker/APP.html",
+  "name": "MKD BusTracker",
+  "short_name": "MKD BusTracker",
+  "description": "Pratenje vo zivo na avtobusi za Kumanovo",
+  "start_url": "/MacedonianBusTracker/index.html",
   "display": "standalone",
   "theme_color": "#b99b11",
   "background_color": "#f0f4f8",
