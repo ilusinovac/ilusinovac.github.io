@@ -28,10 +28,17 @@
             gap: 15px;
         }
         
-        .logo h1 { font-size: 1.6rem; margin-bottom: 5px; }
-        .logo p { font-size: 0.8rem; opacity: 0.9; }
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         
-    
+        .logo img {
+            max-width: 180px;
+            height: auto;
+        }
+        
         .button-group {
             display: flex;
             gap: 10px;
@@ -295,6 +302,42 @@
             .button-group { gap: 5px; }
             .action-btn { padding: 5px 12px; font-size: 0.7rem; }
             .action-btn i { font-size: 0.8rem; }
+            
+            /* Center logo telefon */
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .logo img {
+                max-width: 140px;
+            }
+            
+            .stats {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo img {
+                max-width: 120px;
+            }
+            
+            .stats {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .button-group {
+                width: 100%;
+                justify-content: center;
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
@@ -348,7 +391,7 @@
     </div>
 
     <script>
-
+        // [Your existing JavaScript code remains exactly the same]
         const GOOGLE_SHEETS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCoWdZAqSqWbZgIIkjaoLgH_EXz8530-2M1brnb0cL9op730qk3ObV_s07MV46a7XGdLqhlKmxdeZ0/pub?output=csv";
         
         let allStops = [];
@@ -356,7 +399,6 @@
         let activeStop = null;
         let map = null;
         let markers = {};
-
 
         function isSKRoute(routeName) {
             return routeName && routeName.toUpperCase().includes("SK");
@@ -667,7 +709,6 @@
             }, 800);
         }
         
-        // Initialize map
         function initMap() {
             map = L.map('map').setView([42.128, 21.71], 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -684,7 +725,6 @@
             }
         }
         
-        // Start the app
         function init() {
             initMap();
             loadDataFromSheet();
