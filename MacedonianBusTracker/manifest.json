@@ -1,21 +1,24 @@
 {
   "name": "MKD BusTracker",
   "short_name": "MKD BusTracker",
-  "description": "Pratenje vo zivo na avtobusi za Kumanovo",
+  "description": "Pratenje vo realno vreme na autobusi vo Kumanovo",
   "start_url": "/MacedonianBusTracker/index.html",
   "display": "standalone",
   "theme_color": "#b99b11",
   "background_color": "#f0f4f8",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "/MacedonianBusTracker/logo.png",
+      "src": "/MacedonianBusTracker/Logo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/MacedonianBusTracker/logo.png",
+      "src": "/MacedonianBusTracker/Logo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
