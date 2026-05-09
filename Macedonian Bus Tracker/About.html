@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <link rel="icon" type="image/x-icon" href="/Logo.png">
+    <title>INFO</title>
+    <style>
+         {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a4a6e 0%, #0f2b3d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .white-square {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .white-square p {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #000000;
+            font-weight: 500;
+        }
+        
+        .white-square .names {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2b82b4;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            .white-square {
+                padding: 30px 20px;
+            }
+            .white-square p {
+                font-size: 1.2rem;
+            }
+            .white-square .names {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="white-square">
+        <p>
+            Ova web stranica e izrabotena od strana na:
+        </p>
+        <hr>
+        <p class="names">
+            Antonio Peshevski | 235017 <br>
+            Mario Zlatanovski | 215039 <br>
+            Luka Ristovski    | 235032 <br>
+        </p>
+        <hr>
+        <p>Faculty of Computer Science and Engineering</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Macedonian Bus Tracker</title>
+    <link rel="icon" type="image/x-icon" href="Logo.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #b99b11 0%, #c2180b 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .logo h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        .logo p { font-size: 0.8rem; opacity: 0.9; }
+        
+    
+        .button-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .action-btn i {
+            font-size: 1rem;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .container { 
+            max-width: 1400px; 
+            margin: 20px auto; 
+            padding: 0 20px;
+            flex: 1;
+        }
+        .dashboard { display: flex; gap: 20px; flex-wrap: wrap; }
+        
+        .stops-panel {
+            flex: 1.2;
+            min-width: 300px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh;
+        }
+        
+        .map-panel {
+            flex: 2;
+            min-width: 350px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-header {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-bottom: 2px solid #e2edf2;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .route-filters {
+            padding: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+        }
+        
+        .route-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e2e8f0;
+            color: #1a4a6e;
+            transition: all 0.3s;
+        }
+        
+        .route-btn:hover { transform: translateY(-2px); background: #cbd5e1; }
+        .route-btn.active { background: #1a4a6e; color: white; transform: scale(1.05); }
+        
+        .stops-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .stop-item {
+            padding: 12px 18px;
+            border-bottom: 1px solid #ecf3f8;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stop-item:hover { background: #f0f6fa; transform: translateX(3px); }
+        .stop-item.active { background: #e3f0f7; border-left: 4px solid #2ecc71; }
+        .stop-name { font-weight: 600; margin-bottom: 4px; }
+        .stop-id { font-size: 0.7rem; color: #7a9cbb; }
+        .next-time { font-size: 0.75rem; background: #e8f0f7; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+        
+        #map { height: 320px; width: 100%; background: #cfe3ef; }
+        
+        .arrivals-panel {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #e9edf2;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+        
+        .selected-stop-name { font-size: 1.3rem; font-weight: 800; color: #0f2b3d; }
+        .route-badge { display: inline-block; background: #1e6f5c; color: white; padding: 4px 14px; border-radius: 30px; font-size: 0.8rem; margin-top: 8px; }
+        
+        .ticket-price-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .ticket-price-badge.paid {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .ticket-price-badge.free {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .ticket-price-badge i {
+            margin-right: 5px;
+        }
+        
+        .arrivals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 280px;
+            overflow-y: auto;
+        }
+        
+        .time-card {
+            background: #f8fafc;
+            border: 1px solid #e2edf2;
+            border-radius: 10px;
+            padding: 8px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .time-card.live { 
+            background: #e8f5e9; 
+            border-left: 3px solid #2ecc71;
+            animation: pulse-bg 1s ease-in-out;
+        }
+        
+        .time-card.past { 
+            background: #f5f5f5; 
+            opacity: 0.6;
+        }
+        
+        .time-card.upcoming { background: #ffffff; }
+        
+        .time-value { font-size: 0.95rem; font-weight: 800; font-family: monospace; color: #1a4a6e; }
+        .time-status { font-size: 0.65rem; margin-top: 4px; color: #2c7a5e; }
+        .no-data { text-align: center; padding: 40px; color: #8aaec0; }
+        
+        .refresh-btn {
+            background: #297c6b;
+            border: none;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .refresh-btn:hover { background: #1e5f51; transform: scale(1.02); }
+        .refresh-btn:active { transform: scale(0.98); }
+        
+        .loading { text-align: center; padding: 20px; color: #1a4a6e; }
+        .live-dot { display: inline-block; width: 8px; height: 8px; background: #2ecc71; border-radius: 50%; animation: pulse 1.5s infinite; margin-right: 6px; }
+        
+        .schedule-info {
+            font-size: 0.7rem;
+            color: #297c6b;
+            margin-top: 10px;
+            padding: 8px;
+            background: #f0f7fc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
+            color: #a0b8cc;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            border-top: 1px solid #2a3a4a;
+        }
+        
+        .footer a {
+            color: #b99b11;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        @keyframes pulse-bg {
+            0%, 100% { background: #e8f5e9; }
+            50% { background: #c8e6d9; }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard { flex-direction: column; }
+            .arrivals-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+            .stats { font-size: 0.7rem; gap: 10px; }
+            .ticket-price-badge { font-size: 0.7rem; padding: 3px 10px; }
+            .button-group { gap: 5px; }
+            .action-btn { padding: 5px 12px; font-size: 0.7rem; }
+            .action-btn i { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="Logo.png" width="180px" height="100px" alt="BusTracker Logo">
+        </div>
+        <div class="stats">
+            <div class="button-group">
+                <a href="mailto:antoniopesevski999@outlook.com" class="action-btn" target="_blank"><i class="fas fa-user-plus"></i> Prijavi se kako prevoznik</a>
+                <a href="/About.html" class="action-btn" target="_blank"><i class="fas fa-info-circle"></i> Info</a>
+            </div>
+            <span><i class="fas fa-route"></i> <span id="routeCount">0</span> Ruti</span>
+            <span><i class="fas fa-map-marker-alt"></i> <span id="stopCount">0</span> Postrojki</span>
+            <span><i class="fas fa-clock"></i> <span id="currentTime">--:--:--</span></span>
+            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="dashboard">
+            <div class="stops-panel">
+                <div class="panel-header"><i class="fas fa-list"></i> Avtobuski postrojki</div>
+                <div class="route-filters" id="routeFilters"></div>
+                <div class="stops-list" id="stopsList">
+                    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading data from Google Sheets...</div>
+                </div>
+            </div>
+
+            <div class="map-panel">
+                <div class="panel-header"><i class="fas fa-map"></i> Mapa na postrojki</div>
+                <div id="map"></div>
+                <div class="arrivals-panel" id="arrivalsPanel">
+                    <div class="selected-stop-name" id="selectedStopName">Odberete postrojka</div>
+                    <div id="routeInfo"></div>
+                    <div id="arrivalsList">
+                        <div class="no-data">Kliknete na bilo koja postrojka za da go vidite vremeto na pristiganje</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p><i class="fas fa-bus"></i> © 2026 BusTracker Kumanovo</p>
+        <p style="font-size: 0.7rem; margin-top: 5px;">
+            <i class="fas fa-sync-alt"></i> Avtomatski se osvezuva na sekoi 30 sekundi
+        </p>
+    </div>
+
+    <script>
+
+        const GOOGLE_SHEETS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCoWdZAqSqWbZgIIkjaoLgH_EXz8530-2M1brnb0cL9op730qk3ObV_s07MV46a7XGdLqhlKmxdeZ0/pub?output=csv";
+        
+        let allStops = [];
+        let currentRoute = null;
+        let activeStop = null;
+        let map = null;
+        let markers = {};
+
+
+        function isSKRoute(routeName) {
+            return routeName && routeName.toUpperCase().includes("SK");
+        }
+        
+        function getTicketPriceHTML(routeName) {
+            if (isSKRoute(routeName)) {
+                return `<span class="ticket-price-badge paid"><i class="fas fa-ticket-alt"></i> Cena na karta: 170 den.</span>`;
+            } else {
+                return `<span class="ticket-price-badge free"><i class="fas fa-ticket-alt"></i> Cena na karta: BESPLATNO</span>`;
+            }
+        }
+
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const timeElement = document.getElementById("currentTime");
+            if (timeElement) {
+                timeElement.innerHTML = timeStr;
+            }
+        }
+
+        function parseAllArrivalTimes(arrivalTimeStr) {
+            if (!arrivalTimeStr || arrivalTimeStr === "") return [];
+            
+            let cleaned = arrivalTimeStr.replace(/\s+/g, ' ').trim();
+            let times = cleaned.split(',');
+            
+            times = times.map(t => t.trim())
+                         .filter(t => t.length > 0 && t.match(/^\d{1,2}:\d{2}$/));
+            
+            return times;
+        }
+
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function getAllArrivalsWithStatus(arrivalTimeStr) {
+            const allTimes = parseAllArrivalTimes(arrivalTimeStr);
+            if (allTimes.length === 0) return [];
+            
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            
+            const parsed = allTimes.map(time => {
+                const totalMinutes = timeToMinutes(time);
+                const minsUntil = totalMinutes - currentMinutes;
+                
+                let status = '';
+                let isLive = false;
+                let isPast = false;
+                
+                if (minsUntil >= 0 && minsUntil <= 15) {
+                    status = `🔴 LIVE (${minsUntil} min)`;
+                    isLive = true;
+                } else if (minsUntil > 15 && minsUntil <= 60) {
+                    status = `📅 za ${minsUntil} min`;
+                } else if (minsUntil > 60) {
+                    const hours = Math.floor(minsUntil / 60);
+                    const minutes = minsUntil % 60;
+                    status = `📅 za ${hours}h ${minutes}m`;
+                } else {
+                    const minsAgo = Math.abs(minsUntil);
+                    if (minsAgo < 60) {
+                        status = `✓ ${minsAgo} min pominati`;
+                    } else {
+                        const hours = Math.floor(minsAgo / 60);
+                        const minutes = minsAgo % 60;
+                        status = `✓ ${hours}h ${minutes}m pominati`;
+                    }
+                    isPast = true;
+                }
+                
+                return {
+                    time: time,
+                    totalMinutes: totalMinutes,
+                    displayTime: time,
+                    status: status,
+                    isLive: isLive,
+                    isPast: isPast
+                };
+            });
+            
+            parsed.sort((a, b) => a.totalMinutes - b.totalMinutes);
+            
+            return parsed;
+        }
+
+        function getNextArrival(arrivalTimeStr) {
+            const allArrivals = getAllArrivalsWithStatus(arrivalTimeStr);
+            const nextArrival = allArrivals.find(a => !a.isPast);
+            if (nextArrival) {
+                if (nextArrival.isLive) {
+                    return `${nextArrival.time} (LIVE)`;
+                }
+                return `${nextArrival.time}`;
+            }
+            return "Prevozot za deneska zavrsi";
+        }
+
+        async function loadDataFromSheet() {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_URL);
+                const csvText = await response.text();
+                
+                const rows = csvText.split('\n');
+                
+                allStops = [];
+                for (let i = 1; i < rows.length; i++) {
+                    if (!rows[i].trim()) continue;
+                    
+                    let line = rows[i];
+                    let values = [];
+                    let inQuotes = false;
+                    let currentValue = '';
+                    
+                    for (let char of line) {
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            values.push(currentValue.trim());
+                            currentValue = '';
+                        } else {
+                            currentValue += char;
+                        }
+                    }
+                    values.push(currentValue.trim());
+                    
+                    const stop = {
+                        STOP_ID: values[0]?.replace(/"/g, '').trim(),
+                        STOP_NAME: values[1]?.replace(/"/g, '').trim(),
+                        LATITUDE: parseFloat(values[2]),
+                        LONGITUDE: parseFloat(values[3]),
+                        ROUTE_NUMBER: values[4]?.replace(/"/g, '').trim(),
+                        ARRIVAL_TIME: values[5]?.replace(/"/g, '').trim()
+                    };
+                    
+                    if (stop.STOP_ID && !isNaN(stop.LATITUDE) && !isNaN(stop.LONGITUDE) && stop.ARRIVAL_TIME) {
+                        allStops.push(stop);
+                    }
+                }
+                
+                console.log(`Loaded ${allStops.length} stops from Google Sheets`);
+                
+                if (allStops.length === 0) {
+                    document.getElementById("stopsList").innerHTML = 
+                        '<div class="no-data">❌ No data found. Please check your Google Sheet format.</div>';
+                    return;
+                }
+                
+                const routes = [...new Set(allStops.map(s => s.ROUTE_NUMBER))].sort();
+                document.getElementById("routeCount").innerHTML = routes.length;
+                
+                const filterDiv = document.getElementById("routeFilters");
+                filterDiv.innerHTML = routes.map(route => 
+                    `<button class="route-btn" data-route="${route}">🚌 ${route}</button>`
+                ).join('');
+                
+                if (routes.length > 0) {
+                    currentRoute = routes[0];
+                    const firstBtn = document.querySelector(`[data-route="${currentRoute}"]`);
+                    if (firstBtn) firstBtn.classList.add('active');
+                    renderStops();
+                }
+                
+                document.querySelectorAll('.route-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        document.querySelectorAll('.route-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        currentRoute = btn.dataset.route;
+                        activeStop = null;
+                        renderStops();
+                        document.getElementById("selectedStopName").innerHTML = "Odberete postrojka";
+                        document.getElementById("routeInfo").innerHTML = "";
+                        document.getElementById("arrivalsList").innerHTML = '<div class="no-data">👈 Kliknete na bilo koja postrojka za da go vidite vremeto na pristiganje</div>';
+                    };
+                });
+                
+            } catch (error) {
+                console.error("Error loading data:", error);
+                document.getElementById("stopsList").innerHTML = 
+                    '<div class="no-data">❌ Error loading data. Make sure your Google Sheet is published and the link is correct.</div>';
+            }
+        }
+
+        function renderStops() {
+            const stops = allStops.filter(s => s.ROUTE_NUMBER === currentRoute);
+            document.getElementById("stopCount").innerHTML = stops.length;
+            
+            const container = document.getElementById("stopsList");
+            container.innerHTML = "";
+            
+            if (stops.length === 0) {
+                container.innerHTML = '<div class="no-data">No stops found for this route</div>';
+                return;
+            }
+            
+            stops.forEach(stop => {
+                const nextTime = getNextArrival(stop.ARRIVAL_TIME);
+                const totalTimes = parseAllArrivalTimes(stop.ARRIVAL_TIME).length;
+                
+                const div = document.createElement("div");
+                div.className = `stop-item ${activeStop?.STOP_ID === stop.STOP_ID ? 'active' : ''}`;
+                div.innerHTML = `
+                    <div>
+                        <div class="stop-name">${stop.STOP_NAME}</div>
+                        <div class="stop-id">ID: ${stop.STOP_ID} | ${totalTimes} dnevni poaganja</div>
+                    </div>
+                    <div class="next-time">🚌 Sledno: ${nextTime}</div>
+                `;
+                div.onclick = () => selectStop(stop);
+                container.appendChild(div);
+            });
+            
+            updateMap(stops);
+        }
+        
+        function updateMap(stops) {
+            if (!map) return;
+            
+            Object.values(markers).forEach(m => map.removeLayer(m));
+            markers = {};
+            
+            stops.forEach(stop => {
+                const marker = L.marker([stop.LATITUDE, stop.LONGITUDE])
+                    .bindTooltip(`${stop.STOP_NAME}<br>${currentRoute}`, { sticky: true })
+                    .addTo(map);
+                marker.on('click', () => selectStop(stop));
+                markers[stop.STOP_ID] = marker;
+            });
+            
+            if (activeStop && markers[activeStop.STOP_ID]) {
+                map.setView([activeStop.LATITUDE, activeStop.LONGITUDE], 14);
+                markers[activeStop.STOP_ID].openTooltip();
+            } else if (stops.length > 0) {
+                map.setView([stops[0].LATITUDE, stops[0].LONGITUDE], 13);
+            }
+        }
+        
+        function selectStop(stop) {
+            activeStop = stop;
+            renderStops();
+            
+            const allArrivals = getAllArrivalsWithStatus(stop.ARRIVAL_TIME);
+            const totalTimes = allArrivals.length;
+            const upcomingCount = allArrivals.filter(a => !a.isPast).length;
+            const ticketPriceHTML = getTicketPriceHTML(currentRoute);
+            
+            document.getElementById("selectedStopName").innerHTML = stop.STOP_NAME;
+            document.getElementById("routeInfo").innerHTML = `
+                <span class="route-badge">${currentRoute} | Broj na postrojka: ${stop.STOP_ID}</span>
+                ${ticketPriceHTML}
+                <div class="schedule-info">
+                    📅 ${totalTimes} dnevni poaganja | ${upcomingCount} preostanuvaat za deneska
+                    ${upcomingCount === 0 ? ' | ⏰ Posledniot prevoz za deneska e pominat' : ''}
+                </div>
+            `;
+            
+            const arrivalsDiv = document.getElementById("arrivalsList");
+            
+            if (allArrivals.length === 0) {
+                arrivalsDiv.innerHTML = '<div class="no-data">No scheduled arrivals for this stop</div>';
+                return;
+            }
+            
+            let html = '<div class="arrivals-grid">';
+            allArrivals.forEach(arrival => {
+                let cardClass = '';
+                if (arrival.isLive) cardClass = 'live';
+                else if (arrival.isPast) cardClass = 'past';
+                else cardClass = 'upcoming';
+                
+                html += `
+                    <div class="time-card ${cardClass}">
+                        <div class="time-value">${arrival.displayTime}</div>
+                        <div class="time-status">${arrival.status}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            arrivalsDiv.innerHTML = html;
+        }
+        
+        function refreshData() {
+            updateCurrentTime();
+            
+            if (allStops.length > 0) {
+                renderStops();
+                
+                if (activeStop) {
+                    const refreshedStop = allStops.find(s => s.STOP_ID === activeStop.STOP_ID && s.ROUTE_NUMBER === currentRoute);
+                    if (refreshedStop) {
+                        selectStop(refreshedStop);
+                    }
+                }
+            }
+            
+            const btn = document.getElementById("refreshBtn");
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Refreshing...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 800);
+        }
+        
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([42.128, 21.71], 13);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+                subdomains: 'abcd',
+                maxZoom: 18
+            }).addTo(map);
+        }
+        
+        function setupRefreshButton() {
+            const refreshBtn = document.getElementById("refreshBtn");
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+        }
+        
+        // Start the app
+        function init() {
+            initMap();
+            loadDataFromSheet();
+            updateCurrentTime();
+            setupRefreshButton();
+            
+            setInterval(refreshData, 30000);
+            setInterval(updateCurrentTime, 1000);
+        }
+        
+        init();
+    </script>
+</body>
+</html>
