@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
     <title>Macedonian Bus Tracker</title>
     <link rel="icon" type="image/x-icon" href="Logo.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="Logo.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -294,6 +295,7 @@
             50% { background: #c8e6d9; }
         }
         
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .dashboard { flex-direction: column; }
             .arrivals-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
@@ -303,7 +305,7 @@
             .action-btn { padding: 5px 12px; font-size: 0.7rem; }
             .action-btn i { font-size: 0.8rem; }
             
-            /* Center logo telefon */
+            /* Center logo on mobile */
             .header {
                 flex-direction: column;
                 text-align: center;
@@ -323,6 +325,7 @@
             }
         }
         
+        /* Small phones */
         @media (max-width: 480px) {
             .logo img {
                 max-width: 120px;
