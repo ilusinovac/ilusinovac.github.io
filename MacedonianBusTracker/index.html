@@ -509,7 +509,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
                 <div class="panel-header"><i class="fas fa-list"></i> Avtobuski postrojki</div>
                 <div class="route-filters" id="routeFilters"></div>
                 <div class="stops-list" id="stopsList">
-                    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Loading data from Google Sheets...</div>
+                    <div class="loading"><i class="fas fa-spinner fa-pulse"></i> Vcituvanje na podatoci...</div>
                 </div>
             </div>
 
@@ -736,7 +736,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
             } catch (error) {
                 console.error("Error loading data:", error);
                 document.getElementById("stopsList").innerHTML = 
-                    '<div class="no-data">❌ Error loading data. Make sure your Google Sheet is published and the link is correct.</div>';
+                    '<div class="no-data">❌ Error bazata so podatoci ne e pristapna</div>';
             }
         }
 
