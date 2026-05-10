@@ -1,7 +1,7 @@
 {
   "name": "BusTracker",
   "short_name": "BusTracker",
-  "description": "Real-time bus tracking",
+  "description": "Sledenje na autobusi za opstina Kumanovo vo realno vreme",
   "start_url": "/MacedonianBusTracker/index.html",
   "display": "standalone",
   "theme_color": "#b99b11",
