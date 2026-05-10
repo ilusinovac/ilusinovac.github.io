@@ -386,9 +386,116 @@
         </div>
         <div class="stats">
             <div class="button-group">
-                <a href="mailto:antoniopesevski999@outlook.com?subject=Пријава%20за%20превозник%20во%20општина%20Куманово" class="action-btn" target="_blank"><i class="fas fa-user-plus"></i> Prijavi se kako prevoznik</a>
-                <a href="./info/about.html" class="action-btn" target="_blank"><i class="fas fa-info-circle"></i> Info</a>
+    <a href="#" id="openRegisterModalBtn" class="action-btn">
+        <i class="fas fa-user-plus"></i> Prijavi se kako prevoznik
+    </a>
+    <a href="./info/about.html" class="action-btn" target="_blank">
+        <i class="fas fa-info-circle"></i> Info
+    </a>
+</div>
+
+<!-- Modal Form -->
+<div id="registerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10001; justify-content:center; align-items:center;">
+    <div style="background:white; max-width:500px; width:90%; border-radius:20px; padding:20px; max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h3 style="color:#1a4a6e;"><i class="fas fa-user-plus"></i> Пријава на превозник</h3>
+            <button onclick="closeModal()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+        </div>
+        
+        <form id="registerForm">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Име на компанија:</label>
+                <input type="text" id="companyName" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;">
             </div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Единствен даночен број (ЕДБ):</label>
+                <input type="text" id="edb" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;">
+            </div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Телефон за контакт:</label>
+                <input type="tel" id="phone" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;">
+            </div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Email адреса:</label>
+                <input type="email" id="email" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;">
+            </div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Линии кои ги опслужувате:</label>
+                <input type="text" id="lines" placeholder="пр. 1, 2, 3, SK" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;">
+            </div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold; color:#1a4a6e">Постојки каде застанувате:</label>
+                <textarea id="stops" rows="3" placeholder="Наведете ги постојките..." style="width:100%; padding:10px; border:1px solid #ccc; border-radius:10px;"></textarea>
+            </div>
+            
+            <div style="margin-bottom:20px; padding:10px; background:#1a4a6e; border-radius:10px; font-size:12px;">
+                <i class="fas fa-info-circle"></i> При испраќање, ве молиме прикачете го вашиот возен ред (Excel, PDF или слика) откако ќе ви се отвори следниот прозорец.
+            </div>
+            
+            <button type="submit" style="width:100%; background:#b99b11; color:white; border:none; padding:12px; border-radius:30px; font-weight:bold; cursor:pointer;">
+                <i class="fas fa-paper-plane"></i> Испрати пријава
+            </button>
+        </form>
+    </div>
+</div>
+
+<style>
+    @keyframes slideDown {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+    #registerModal > div {
+        animation: slideDown 0.3s ease;
+    }
+</style>
+
+<script>
+    const modal = document.getElementById('registerModal');
+    
+    document.getElementById('openRegisterModalBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        modal.style.display = 'flex';
+    });
+    
+function closeModal() {
+    modal.style.display = 'none';
+    document.getElementById('registerForm').reset();
+}
+    
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+    
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const companyName = document.getElementById('companyName').value;
+    const edb = document.getElementById('edb').value;
+    const phone = document.getElementById('phone').value;
+    const email = document.getElementById('email').value;
+    const lines = document.getElementById('lines').value;
+    const stops = document.getElementById('stops').value;
+    
+    const subject = `Prijava za prevoznik - ${companyName}`;
+    
+    const body = `%0D%0A%0D%0A--------------------------------------------------%0D%0AДОБАР ДЕН,%0D%0A%0D%0AБи сакале возните линии на нашата компанија да бидат додадени:%0D%0A%0D%0A--- ПОДАТОЦИ ЗА КОМПАНИЈАТА ---%0D%0A%0D%0AИме на компанија: ${companyName}%0D%0AЕдинствен даночен број (ЕДБ): ${edb}%0D%0AТелефон: ${phone}%0D%0AEmail: ${email}%0D%0A%0D%0A--- ИНФОРМАЦИИ ЗА ВОЗНИОТ РЕД ---%0D%0A%0D%0AЛинии кои ги опслужуваме: ${lines}%0D%0AПостојки каде застануваме: ${stops}%0D%0A%0D%0A--------------------------------------------------%0D%0A** ПРИ ИСПРАЌАЊЕ НА ОВИЕ ПОДАТОЦИ ВЕ МОЛИМЕ ДА ГО ИСПРАТИТЕ И ВАШИОТ ВОЗЕН РЕД КАКО И ПОСТОЈКИТЕ НА КОИ ЗАСТАНУВАТЕ **%0D%0A%0D%0AПоздрав,%0D%0A--------------------------------------------------%0D%0A%0D%0A`;
+    
+    window.location.href = `mailto:antoniopesevski999@outlook.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    
+    closeModal();
+    
+    alert('Вашата пријава е испратена! Ќе ве контактираме наскоро.');
+    
+    this.reset();
+});
+</script>
             <span><i class="fas fa-route"></i> <span id="routeCount">0</span> Ruti</span>
             <span><i class="fas fa-map-marker-alt"></i> <span id="stopCount">0</span> Postrojki</span>
             <span><i class="fas fa-clock"></i> <span id="currentTime">--:--:--</span></span>
@@ -422,14 +529,23 @@
 
     <!-- Footer -->
     <div class="footer">
-        <p><i class="fas fa-bus"></i> © 2026 BusTracker Kumanovo</p>
-        <p style="font-size: 0.7rem; margin-top: 5px;">
-            <i class="fas fa-sync-alt"></i> Avtomatski se osvezuva na sekoi 30 sekundi
-        </p>
+    <p><i class="fas fa-bus"></i> © 2026 BusTracker Kumanovo</p>
+    <p style="font-size: 0.7rem; margin-top: 5px;">
+        <i class="fas fa-sync-alt"></i> Avtomatski se osvezuva na sekoi 10 sekundi
+    </p>
+    <p style="font-size: 0.65rem; margin-top: 8px; opacity: 0.8;">
+        <i class="fas fa-map"></i> Map data © 
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" style="color: #b99b11; text-decoration: none;">
+            OpenStreetMap contributors
+        </a>
+        | Licensed under 
+        <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" style="color: #b99b11; text-decoration: none;">
+            ODbL
+        </a>
+    </p>
     </div>
 
     <script>
-        // [Your existing JavaScript code remains exactly the same]
         const GOOGLE_SHEETS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSCoWdZAqSqWbZgIIkjaoLgH_EXz8530-2M1brnb0cL9op730qk3ObV_s07MV46a7XGdLqhlKmxdeZ0/pub?output=csv";
         
         let allStops = [];
@@ -769,7 +885,7 @@
             updateCurrentTime();
             setupRefreshButton();
             
-            setInterval(refreshData, 30000);
+            setInterval(refreshData, 10000);
             setInterval(updateCurrentTime, 1000);
         }
         
