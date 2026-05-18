@@ -2,8 +2,7 @@
     <img src="logo.png" alt="Logo" width="250" height="250">
 </p>
 <hr>
-<h1>Planirani nadgradbi</h1>
-<h2>Last update: 19.05.2026<h2>
+<h1>Planirani nadgradbi</h1><br><p>Last updated: 19.05.2026</p>
 <ul>
     <li>Dark Mode</li>
     <li>Push notifications</li>
