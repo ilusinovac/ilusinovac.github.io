@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -40,6 +42,7 @@
     <!-- Apple touch icon -->
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -359,7 +362,123 @@
                 justify-content: center;
             }
         }
-        
+    body.dark-mode {
+        background: #1a1a2e;
+        color: #eee;
+    }
+
+    body.dark-mode .header {
+        background: linear-gradient(135deg, #3257b8 0%, #0f0f1a 100%);
+    }
+
+    body.dark-mode .stops-panel,
+    body.dark-mode .map-panel {
+        background: #16213e;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    body.dark-mode .panel-header {
+        background: #0f0f1a;
+        border-bottom-color: #2a2a4a;
+        color: #eee;
+    }
+
+    body.dark-mode .stop-item {
+        border-bottom-color: #2a2a4a;
+        color: #ddd;
+    }
+
+    body.dark-mode .stop-item:hover {
+        background: #1a1a3e;
+    }
+
+    body.dark-mode .stop-item.active {
+        background: #1a2a4e;
+        border-left-color: #2ecc71;
+    }
+
+    body.dark-mode .stop-id {
+        color: #8899bb;
+    }
+
+    body.dark-mode .next-time {
+        background: #2a2a4a;
+        color: #eee;
+    }
+
+    body.dark-mode .route-btn {
+        background: #2a2a4a;
+        color: #ddd;
+    }
+
+    body.dark-mode .route-btn:hover {
+        background: #3a3a5a;
+    }
+
+    body.dark-mode .route-btn.active {
+        background: #1a4a6e;
+        color: white;
+    }
+
+    body.dark-mode .arrivals-panel {
+        background: #16213e;
+        border-top-color: #2a2a4a;
+    }
+
+    body.dark-mode .selected-stop-name {
+        color: #eee;
+    }
+
+    body.dark-mode .schedule-info {
+        background: #1a1a3e;
+        color: #77aa88;
+    }
+
+    body.dark-mode .time-card {
+        background: #1a1a3e;
+        border-color: #2a2a4a;
+    }
+
+    body.dark-mode .time-card.upcoming {
+        background: #1a1a3e;
+    }
+
+    body.dark-mode .time-card.past {
+        background: #2a2a3e;
+        opacity: 0.5;
+    }
+
+    body.dark-mode .time-value {
+        color: #ddd;
+    }
+
+    body.dark-mode .footer {
+        background: linear-gradient(135deg, #0f0f1a 0%, #0a0a12 100%);
+        border-top-color: #2a2a4a;
+    }
+
+    body.dark-mode #searchStop {
+        background: #1a1a3e;
+        border-color: #2a2a4a;
+        color: white;
+    }
+
+    body.dark-mode #searchStop::placeholder {
+        color: #8899bb;
+    }
+
+    body.dark-mode .route-filters {
+        background: #16213e;
+        border-bottom-color: #2a2a4a;
+    }
+
+    body.dark-mode .loading {
+        color: #aaa;
+    }
+
+body.dark-mode .no-data {
+    color: #8899bb;
+}
         /* Small phones */
         @media (max-width: 480px) {
             .logo img {
@@ -377,6 +496,7 @@
                 margin-bottom: 5px;
             }
         }
+        
     </style>
 </head>
 <body>
@@ -392,6 +512,7 @@
     <a href="./info/about.html" class="action-btn" target="_blank">
         <i class="fas fa-info-circle"></i> Info
     </a>
+    <button id="darkModeBtn" class="action-btn">Dark Mode<i class="fas fa-moon"></i></button>
 </div>
 
 <!-- Modal Form -->
@@ -863,6 +984,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
             }, 800);
         }
         
+        // Initialize map
         function initMap() {
             map = L.map('map').setView([42.128, 21.71], 13);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -890,6 +1012,50 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         }
         
         init();
+        // Darkmode     
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        
+        localStorage.setItem('darkMode', isDark);
+        
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        if (darkModeBtn) {
+            darkModeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Dark Mode' : '<i class="fas fa-moon"></i> Dark Mode';
+        }
+        
+        if (map) {
+            map.invalidateSize();
+        }
+    }
+    
+    function initDarkMode() {
+        const savedDarkMode = localStorage.getItem('darkMode');
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        
+        if (savedDarkMode === 'true') {
+            document.body.classList.add('dark-mode');
+            if (darkModeBtn) {
+                darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+            }
+        } else {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+                if (darkModeBtn) {
+                    darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                }
+                localStorage.setItem('darkMode', 'true');
+            }
+        }
+    }
+    
+    const darkModeBtn = document.getElementById('darkModeBtn');
+    if (darkModeBtn) {
+        darkModeBtn.addEventListener('click', toggleDarkMode);
+    }
+    
+    // Иницијализација на dark mode
+    initDarkMode();
         // Instalacija 
         
     let deferredPrompt;
@@ -1101,3 +1267,4 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
     </script>
 </body>
 </html>
+
