@@ -4,7 +4,7 @@
 <hr>
 <h1>Planirani nadgradbi</h1><br><p><b>Last updated plan: 19.05.2026</b></p>
 <ul>
-    <li>Dark Mode ⏳</li>
+    <li>Dark Mode ✅ - 19.05.2026</li>
     <li>Push notifications ⏳</li>
     <li>Search opcija za postrojki ⏳</li>
     <li>Route Planner ⏳</li>
