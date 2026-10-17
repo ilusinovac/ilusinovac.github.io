@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product — The Yard Lounge Bar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">
+      <div class="logo-mark">Y</div>
+      The Yard
+    </a>
+    <ul>
+      <li><a href="menu.html">Menu</a></li>
+      <li><a href="index.html#hours">Hours</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- PRODUCT VIEW -->
+  <main class="product-page" id="product-root">
+
+    <div class="product-back">
+      <a href="menu.html" class="btn small">&larr; Back to Menu</a>
+    </div>
+
+    <article class="product-card">
+
+      <!-- IMAGE -->
+      <div class="product-image-wrap">
+        <img id="product-image" src="" alt="" class="product-image">
+        <div class="product-image-fallback" id="product-image-fallback">Y</div>
+      </div>
+
+      <!-- INFO -->
+      <div class="product-info">
+        <p class="product-category" id="product-category">Category</p>
+        <h1 class="product-name" id="product-name">Product Name</h1>
+        <div class="product-divider"></div>
+
+        <p class="product-price" id="product-price">0.00</p>
+
+        <div class="product-section">
+          <h2>ОПИС</h2>
+          <p id="product-description"></p>
+        </div>
+
+        <div class="product-section">
+          <h2>Ingredients</h2>
+          <ul id="product-ingredients" class="ingredient-list">
+            <li>Ingredient</li>
+          </ul>
+        </div>
+        
+
+        <div class="product-section">
+          <h2>Details</h2>
+          <p id="product-details">Extra info goes here.</p>
+        </div>
+      </div>
+
+    </article>
+
+  </main>
+
+  <footer>
+    &copy; 2026 The Yard Lounge Bar &middot; Drink Responsibly
+  </footer>
+
+  <script src="products.js"></script>
+</body>
+</html>
